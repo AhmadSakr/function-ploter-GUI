@@ -1,20 +1,13 @@
 # importing various libraries
-import sys
-from PyQt5.QtWidgets import QDialog, QApplication, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QDialog, QApplication, QPushButton, QVBoxLayout, QGridLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-import matplotlib.pyplot as plt
-import random
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QLineEdit
-from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtCore import QSize
 
-# main window
-# which inherits QDialog
+from PyQt5.QtWidgets import QLabel, QLineEdit
+from PyQt5.QtWidgets import QPushButton,QMessageBox
+
 class Window(QDialog):
 
     # constructor
@@ -23,74 +16,104 @@ class Window(QDialog):
         # a figure instance to plot on
         self.figure = plt.figure()
 
-        # this is the Canvas Widget that
-        # displays the 'figure'it takes the
-        # 'figure' instance as a parameter to __init__
         self.canvas = FigureCanvas(self.figure)
 
-        # Just some button connected to 'plot' method
-        self.button = QPushButton('Plot')
+        self.plotButton = QPushButton('Plot')
 
-        self.nameLabel = QLabel(self)
-        self.nameLabel.setText('Name:')
+        self.equationLabel = QLabel('enter the equation')
+        self.xMinLabel = QLabel('enter xMin')
+        self.xMaxLabel = QLabel('enter xMax')
+
         self.equationText = QLineEdit(self)
         self.xMinText = QLineEdit(self)
         self.xMaxText = QLineEdit(self)
 
-        self.line.move(80, 20)
-        self.line.resize(200, 32)
-        self.nameLabel.move(20, 20)
 
-        # adding action to the button
-        self.button.clicked.connect(self.plot)
+
+        self.plotButton.clicked.connect(self.plot)
 
         # creating a Vertical Box layout
-        layout = QVBoxLayout()
+        layout = QGridLayout()
+        layout2 = QVBoxLayout()
+        # adding components to the layout
+        layout.addWidget(self.canvas,0,0)
+        layout.addWidget(self.plotButton,1,0)
+        layout.addWidget(self.equationLabel,0,1)
+        layout.addWidget(self.equationText,0,2)
+        layout.addWidget(self.xMinLabel,1,1)
+        layout.addWidget(self.xMinText,1,2)
+        layout.addWidget(self.xMaxLabel,2,1)
+        layout.addWidget(self.xMaxText,2,2)
 
-        # adding canvas to the layout
-        layout.addWidget(self.canvas)
 
-        # adding push button to the layout
-        layout.addWidget(self.button)
-        layout.addWidget(self.nameLabel)
-        layout.addWidget(self.line)
-
-
-        # setting layout to the main window
         self.setLayout(layout)
 
-    # action called by thte push button
     def plot(self):
-        # random data
-        data = [random.random() for i in range(10)]
-
-        # clearing old figure
         self.figure.clear()
 
-        # create an axis
         ax = self.figure.add_subplot(111)
+        if  self.xMinText.text() == str(""):
+            self.msg = QMessageBox()
+            self.msg.setWindowTitle("xMin error massage")
+            self.msg.setText("empty xMin text")
+            self.msg.setIcon(QMessageBox.Critical)
+            x = self.msg.exec_()
+        else:
+            try:
+                xMin = int(self.xMinText.text())
+            except:
+                print("wrong xMin")
+                self.msg = QMessageBox()
+                self.msg.setWindowTitle("minimum x value error")
+                self.msg.setText("wrong value")
+                self.msg.setIcon(QMessageBox.Critical)
+                x = self.msg.exec_()
 
-        equ = str(input("enter t"))
+        if  self.xMaxText.text() == str(""):
+            self.msg = QMessageBox()
+            self.msg.setWindowTitle("xMax error massage")
+            self.msg.setText("empty xMax text")
+            self.msg.setIcon(QMessageBox.Critical)
+            x = self.msg.exec_()
+        else:
+            try:
+                xMax = int(self.xMaxText.text())
+            except:
+                print("wrong xMax")
+                self.msg = QMessageBox()
+                self.msg.setWindowTitle("maximum x value error")
+                self.msg.setText("wrong value")
+                self.msg.setIcon(QMessageBox.Critical)
+                x = self.msg.exec_()
 
-        xMin = int(input("xMin"))
-        xMax = int(input("xMax"))
+        if  self.equationText.text() == str(""):
+            self.msg = QMessageBox()
+            self.msg.setWindowTitle("equation error massage")
+            self.msg.setText("empty equation")
+            self.msg.setIcon(QMessageBox.Critical)
+            x = self.msg.exec_()
+        else:
+            try:
+                equ = str(self.equationText.text())
+                x = np.linspace(xMin, xMax, 100)
+                equ = equ.replace("X", "x")
+                equ = equ.replace("^", "**")
+                y = eval(equ)
 
-        x = np.linspace(xMin, xMax, 100)
-        equ = equ.replace("X", "x")
-        equ = equ.replace("^", "**")
-        y = eval(equ)
+                ax.plot(x, y)
+            except:
+                print("wrong operation")
+                self.msg = QMessageBox()
+                self.msg.setWindowTitle("equation error massage")
+                self.msg.setText("empty equation")
+                self.msg.setIcon(QMessageBox.Critical)
+                x = self.msg.exec_()
 
 
-        # plot data
-        ax.plot(x,y)
-
-        # refresh canvas
         self.canvas.draw()
 
-
-# driver code
 if __name__ == '__main__':
-    # creating apyqt5 application
+    # creating a pyqt5 application
     app = QApplication(sys.argv)
 
     # creating a window object
