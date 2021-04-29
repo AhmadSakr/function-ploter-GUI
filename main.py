@@ -1,4 +1,4 @@
-# importing various libraries
+# libraries importing
 from PyQt5.QtWidgets import QDialog, QApplication, QPushButton, QVBoxLayout, QGridLayout, QFormLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
@@ -8,7 +8,7 @@ from PIL import Image
 
 from PyQt5.QtWidgets import QLabel, QLineEdit
 from PyQt5.QtWidgets import QPushButton,QMessageBox
-
+from PyQt5 import QtCore, QtGui
 class Window(QDialog):
 
     # constructor
@@ -16,6 +16,10 @@ class Window(QDialog):
         super(Window, self).__init__(parent)
         # a figure instance to plot on
         self.figure = plt.figure()
+        self.figure
+        self.test_image = QtGui.QImage()
+        self.test_image.load('1.png')
+        self.test_image.save('x.png')
 
         self.canvas = FigureCanvas(self.figure)
         self.canvas.setMinimumSize(400,400)
@@ -55,71 +59,58 @@ class Window(QDialog):
 
         ax = self.figure.add_subplot(111)
 
+        self.error_messages_handling()
+        try:
+            x, y = self.equation_xmin_xmax_evaluate(self.equationText.text(), self.xMinText.text(), self.xMaxText.text(), 100)
+            ax.plot(x, y)
+        except:
+            self.display_error_message("equation error massage", "wrong operation")
+
+        self.canvas.draw()
+        plt.savefig('foo.png')
+
+
+    def display_error_message(self,errorWindowTitleText,errorWindowText):
+        self.msg = QMessageBox()
+        self.msg.setWindowTitle(str(errorWindowTitleText))
+        self.msg.setText(str(errorWindowText))
+        self.msg.setIcon(QMessageBox.Critical)
+        x = self.msg.exec_()
+    def error_messages_handling(self):
+        print('')
         if  str(self.xMinText.text()) == str(""):
-            self.msg = QMessageBox()
-            self.msg.setWindowTitle("xMin error massage")
-            self.msg.setText("empty xMin text")
-            self.msg.setIcon(QMessageBox.Critical)
-            x = self.msg.exec_()
+            self.display_error_message("xMin error massage", "empty xMin text")
 
         else:
             try:
                 xMin = float(self.xMinText.text())
             except:
-                print("wrong xMin")
-                self.msg = QMessageBox()
-                self.msg.setWindowTitle("minimum x value error")
-                self.msg.setText("wrong value")
-                self.msg.setIcon(QMessageBox.Critical)
-                x = self.msg.exec_()
-
-
+                self.display_error_message("minimum x value error", "wrong value")
 
         if  str(self.xMaxText.text()) == str(""):
-            self.msg = QMessageBox()
-            self.msg.setWindowTitle("xMax error massage")
-            self.msg.setText("empty xMax text")
-            self.msg.setIcon(QMessageBox.Critical)
-            x = self.msg.exec_()
+            self.display_error_message("xMax error massage", "empty xMax text")
         else:
             try:
                 xMax = float(self.xMaxText.text())
             except:
-                print("wrong xMax")
-                self.msg = QMessageBox()
-                self.msg.setWindowTitle("maximum x value error")
-                self.msg.setText("wrong value")
-                self.msg.setIcon(QMessageBox.Critical)
-                x = self.msg.exec_()
-
-
+                self.display_error_message("maximum x value error", "wrong value")
 
         if  self.equationText.text() == str(""):
-            self.msg = QMessageBox()
-            self.msg.setWindowTitle("equation error massage")
-            self.msg.setText("empty equation")
-            self.msg.setIcon(QMessageBox.Critical)
-            x = self.msg.exec_()
-        else:
-            try:
-                equ = str(self.equationText.text())
-                x = np.linspace(xMin, xMax, 100)
-                equ = equ.replace("X", "x")
-                equ = equ.replace("^", "**")
-                y = eval(equ)
+            self.display_error_message("equation error massage", "empty equation")
 
-                ax.plot(x, y)
+    def equation_xmin_xmax_evaluate(self, equation_text, xMin_text, xMax_text, no_of_points):
 
-            except:
-                self.msg = QMessageBox()
-                self.msg.setWindowTitle("equation error massage")
-                self.msg.setText("wrong operation")
-                self.msg.setIcon(QMessageBox.Critical)
-                x = self.msg.exec_()
+        x = np.linspace(float(xMin_text), float(xMax_text), int(no_of_points))
 
-
-        self.canvas.draw()
-
+        equ = self.validate_equation(equation_text)
+        y = eval(equ)
+        return x,y
+    def validate_equation(self,equation_text_to_be_validated):
+        equation_text_to_be_validated = str(equation_text_to_be_validated)
+        equation_text_to_be_validated = equation_text_to_be_validated.replace("X", "x")
+        equation_text_to_be_validated = equation_text_to_be_validated.replace("^", "**")
+        validated_equation = equation_text_to_be_validated
+        return validated_equation
 if __name__ == '__main__':
     # creating a pyqt5 application
     app = QApplication(sys.argv)
