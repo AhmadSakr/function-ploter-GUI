@@ -1,5 +1,5 @@
 # importing various libraries
-from PyQt5.QtWidgets import QDialog, QApplication, QPushButton, QVBoxLayout, QGridLayout
+from PyQt5.QtWidgets import QDialog, QApplication, QPushButton, QVBoxLayout, QGridLayout, QFormLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,10 +14,10 @@ class Window(QDialog):
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
         # a figure instance to plot on
-        self.figure = plt.figure()
+        self.figure = plt.figure(figsize=(1, 2))
 
         self.canvas = FigureCanvas(self.figure)
-
+        self.canvas.setMinimumSize(400,400)
         self.plotButton = QPushButton('Plot')
 
         self.equationLabel = QLabel('enter the equation')
@@ -35,15 +35,17 @@ class Window(QDialog):
         # creating a Vertical Box layout
         layout = QGridLayout()
         layout2 = QVBoxLayout()
+
         # adding components to the layout
-        layout.addWidget(self.canvas,0,0)
+        layout.addWidget(self.canvas,0,0,1,6)
         layout.addWidget(self.plotButton,1,0)
-        layout.addWidget(self.equationLabel,0,1)
-        layout.addWidget(self.equationText,0,2)
-        layout.addWidget(self.xMinLabel,1,1)
-        layout.addWidget(self.xMinText,1,2)
-        layout.addWidget(self.xMaxLabel,2,1)
-        layout.addWidget(self.xMaxText,2,2)
+        layout.addWidget(self.equationLabel,1,1)
+        layout.addWidget(self.equationText,1,3,1,3)
+        layout.addWidget(self.xMinLabel,2,0)
+        layout.addWidget(self.xMinText,2,1,1,2)
+        layout.addWidget(self.xMaxLabel,2,3)
+        layout.addWidget(self.xMaxText,2,4,1,2)
+        layout.addWidget(self.xMaxText,2,4,1,2)
 
 
         self.setLayout(layout)
@@ -52,15 +54,22 @@ class Window(QDialog):
         self.figure.clear()
 
         ax = self.figure.add_subplot(111)
+
         if  self.xMinText.text() == str(""):
             self.msg = QMessageBox()
             self.msg.setWindowTitle("xMin error massage")
             self.msg.setText("empty xMin text")
             self.msg.setIcon(QMessageBox.Critical)
             x = self.msg.exec_()
+        elif float(self.xMinText.text())>1.7976931348623157e+308 or float(self.xMinText.text())<-1.7976931348623157e+308:
+            self.msg = QMessageBox()
+            self.msg.setWindowTitle("xMin error massage")
+            self.msg.setText("xMin exceeded max value")
+            self.msg.setIcon(QMessageBox.Critical)
+            x = self.msg.exec_()
         else:
             try:
-                xMin = int(self.xMinText.text())
+                xMin = float(self.xMinText.text())
             except:
                 print("wrong xMin")
                 self.msg = QMessageBox()
@@ -77,7 +86,7 @@ class Window(QDialog):
             x = self.msg.exec_()
         else:
             try:
-                xMax = int(self.xMaxText.text())
+                xMax = float(self.xMaxText.text())
             except:
                 print("wrong xMax")
                 self.msg = QMessageBox()
@@ -102,10 +111,9 @@ class Window(QDialog):
 
                 ax.plot(x, y)
             except:
-                print("wrong operation")
                 self.msg = QMessageBox()
                 self.msg.setWindowTitle("equation error massage")
-                self.msg.setText("empty equation")
+                self.msg.setText("wrong operation")
                 self.msg.setIcon(QMessageBox.Critical)
                 x = self.msg.exec_()
 
