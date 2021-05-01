@@ -1,4 +1,4 @@
-
+# libraries importing
 from PyQt5.QtWidgets import QApplication
 import numpy as np
 import sys

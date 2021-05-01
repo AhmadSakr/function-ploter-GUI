@@ -12,8 +12,6 @@ class Window(QWidget):#main window which inherits from QWidget
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
 
-
-
         self.figure = plt.figure()# a figure instance to plot on
 
         self.canvas = FigureCanvas(self.figure)# a canvas widget that displays the figure

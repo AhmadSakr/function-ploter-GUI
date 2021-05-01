@@ -1,7 +1,7 @@
+# libraries importing
 from PyQt5 import QtCore
 from PIL import Image
 import numpy as np
-
 import FunctionPlotterGUI
 
 def test_hello(qtbot):
