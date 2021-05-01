@@ -7,7 +7,8 @@ import FunctionPlotterGUI
 
 QTApp = QApplication(sys.argv)# create a pyqt5 application
 testWindow = FunctionPlotterGUI.Window() # create a window object
-testWindow.error_message_window_display_state =0
+testWindow.error_message_window_display_state = 0 #1 diplay window display error message during tests
+#FunctionPlotterGUI.saveImagePath="plottedImage(logic).png"
 #testWindow.show()
 #sys.exit(QTApp.exec_())
 def test_equation_xmin_xmax_evaluate():

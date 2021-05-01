@@ -46,33 +46,33 @@ class Window(QWidget):#main window which inherits from QWidget
         self.figure.clear()#to clear old figures
 
         axis = self.figure.add_subplot(111)#creating axis in figure with 1 no of rows 1 no of cols and index 1
-
-        if str(self.xMinText.text()) == str(""):  # check if the xMinText is empty
-            self.display_error_message("xMin error massage", "empty xMin text")  # display error message with "xMin error massage" as a title and "empty xMin text" as a text
-        else:
-            try:
-                xMin = float(self.xMinText.text())  # try to get xMin value from xMinText
-            except:
-                self.display_error_message("minimum x value error", "wrong value")  # display error message with "minimum x value error" as a title and "wrong value" as a text
-        if str(self.xMaxText.text()) == str(""):  # check if the xMaxText is empty
-            self.display_error_message("xMax error massage", "empty xMax text")  # display error message with "xMax error massage" as a title and "empty xMax text" as a text
-        else:
-            try:
-                xMax = float(self.xMaxText.text())  # try to get xMax value from xMaxText
-            except:
-                self.display_error_message("maximum x value error", "wrong value")  # display error message with "maximum x value error" as a title and "wrong value" as a text
-        if self.equationText.text() == str(""):  # check if the equationText is empty
-            self.display_error_message("equation error massage", "empty equation")  # display error message with "equation error massage" as a title and "empty equation" as a text
-        else:
-            try:#call the function to get x and y values needed to plot
+        try:
+            if str(xMin_text) == str(""):  # check if the xMinText is empty
+                self.display_error_message("xMin error massage", "empty xMin text")  # display error message with "xMin error massage" as a title and "empty xMin text" as a text
+            else:
+                try:
+                    xMin = float(xMin_text)  # try to get xMin value from xMinText
+                except:
+                    self.display_error_message("minimum x value error", "wrong value")  # display error message with "minimum x value error" as a title and "wrong value" as a text
+            if str(xMax_text) == str(""):  # check if the xMaxText is empty
+                self.display_error_message("xMax error massage", "empty xMax text")  # display error message with "xMax error massage" as a title and "empty xMax text" as a text
+            else:
+                try:
+                    xMax = float(xMax_text)  # try to get xMax value from xMaxText
+                except:
+                    self.display_error_message("maximum x value error", "wrong value")  # display error message with "maximum x value error" as a title and "wrong value" as a text
+            if equation_text == str(""):  # check if the equationText is empty
+                self.display_error_message("equation error massage", "empty equation")  # display error message with "equation error massage" as a title and "empty equation" as a text
+            else:
+                #call the function to get x and y values needed to plot
                 x, y = self.equation_xmin_xmax_evaluate(equation_text, xMin_text, xMax_text, no_of_points)
                 axis.plot(x, y)#plot the equation
                 self.canvas.draw()# refresh canvas
                 plt.savefig(str(saveImagePathValue))#save current plotted figure to be tested
                 plotedImage = Image.open(str(saveImagePathValue))#get current plotted figure to be tested
                 return plotedImage#return plotedImage
-            except:
-                self.display_error_message("equation error massage", "wrong operation")#display error message if any other error happended
+        except:
+            self.display_error_message("equation error massage", "wrong operation")#display error message if any other error happended
 
     def display_error_message(self,errorWindowTitleText,errorWindowText):#diplay error messages
         self.msg = QMessageBox()#create QMessageBox
