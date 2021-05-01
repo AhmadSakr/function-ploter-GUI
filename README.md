@@ -1,7 +1,8 @@
 # function-ploter-GUI
 ### a simply function ploter GUI which can do the following:
 1. take an arbitrary equation from user with minimum and maximum x values(supported operatons +,-,*,/,^) and simply plot it
-1. display error messages in case of entering any inappropriate inputs:
+2. has resizable GUI components (GridLayout)
+3. display error messages in case of entering any inappropriate inputs:
 * display error message if xminText, xmaxText or equationText is empty
 * display error message if xminText or xmaxText is not a number
 * display error message if equationText is not written properly 
