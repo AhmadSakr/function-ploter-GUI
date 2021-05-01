@@ -1,7 +1,6 @@
 # libraries importing
-from PyQt5.QtWidgets import QDialog, QApplication, QGridLayout
+from PyQt5.QtWidgets import QDialog, QApplication, QGridLayout,QLabel, QLineEdit, QPushButton,QMessageBox
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton,QMessageBox
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
@@ -51,7 +50,7 @@ class Window(QDialog):#main window which inherits from QDialog
             x, y = self.equation_xmin_xmax_evaluate(self.equationText.text(), self.xMinText.text(), self.xMaxText.text(), 100)
             axis.plot(x, y)#plot the equation
             self.canvas.draw()# refresh canvas
-            plt.savefig('testPlotImage.png')#save plot figure to be tested
+            plt.savefig('testPlotImage.png')#save current plotted figure to be tested
         except:
             self.display_error_message("equation error massage", "wrong operation")#display error message if any other error happended
 
@@ -60,7 +59,11 @@ class Window(QDialog):#main window which inherits from QDialog
         self.msg.setWindowTitle(str(errorWindowTitleText))#create QMessageBox title
         self.msg.setText(str(errorWindowText))#create QMessageBox text
         self.msg.setIcon(QMessageBox.Critical)#set the severity level of the message
-        x = self.msg.exec_()#exceute error message diaplay
+        x = self.msg.exec_()#exceute error message display
+        errorMessageTitle = self.msg.windowTitle()#get the title of error messege for testing
+        errorMessageText = self.msg.text()#get the text of error messege for testing
+        return errorMessageTitle, errorMessageText#return their values for testing purposes
+
     def error_messages_handling(self):#call functions that display errors for xmin ,xmax and equation
         if  str(self.xMinText.text()) == str(""):#check if the xMinText is empty
             self.display_error_message("xMin error massage", "empty xMin text")#display error message with "xMin error massage" as a title and "empty xMin text" as a text
@@ -81,7 +84,7 @@ class Window(QDialog):#main window which inherits from QDialog
     # evaluate the values of x and y, and validate equation string
     def equation_xmin_xmax_evaluate(self, equation_text, xMin_text, xMax_text, no_of_points):#get x , y and no of points values needed to plot
         x = np.linspace(float(xMin_text), float(xMax_text), int(no_of_points))#get start, end and no of points of x
-        equ = self.validate_equation(equation_text)#call alidate_equation function
+        equ = self.validate_equation(equation_text)#call validate_equation function
         y = eval(equ)#return the result evaluated from the equ string
         return x,y#return values of x and y
     def validate_equation(self,equation_text_to_be_validated):# validated the entered equation
