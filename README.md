@@ -1,6 +1,6 @@
 # function-ploter-GUI
 ### a simply function ploter GUI which can do the following:
-1. take an arbitrary equation from user with minimum and maximum x values(supported operatons +,-,*,/,^) and simply plot it
+1. take an arbitrary equation from user with minimum and maximum x values (supported operatons: + - * / ^) and simply plot it
 2. has resizable GUI components (GridLayout)
 3. has logic testing codes (pytest) and GUI tesing codes (pytest-qt)
 4. display error messages in case of entering any inappropriate inputs:
